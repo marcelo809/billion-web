@@ -1,935 +1,461 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BILLION — Advisor OS</title>
-  <meta name="description" content="BILLION — Advisor OS: reportes maestros y operación RIA" />
+  <meta charset="UTF-8" />
+  <title>BILLION — Financial Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Fonts (system stack, fast) -->
   <style>
     :root{
-      --bg: #0b0f19;
-      --panel: rgba(255,255,255,.04);
-      --panel2: rgba(255,255,255,.06);
-      --stroke: rgba(255,255,255,.08);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.62);
-      --muted2: rgba(255,255,255,.45);
-      --good: #22c55e;
-      --bad: #ef4444;
-      --warn: #f59e0b;
-      --accent: #7c3aed;
-      --accent2:#06b6d4;
-      --shadow: 0 24px 60px rgba(0,0,0,.45);
-      --radius: 18px;
+      --bg:#0b0f19;
+      --panel:#111827;
+      --panel2: rgba(255,255,255,.04);
+      --stroke: rgba(255,255,255,.10);
+      --text:#ffffff;
+      --muted:#9aa4b2;
+      --brand:#22c55e;
+      --warn:#f59e0b;
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --radius:16px;
     }
 
-    * { box-sizing: border-box; }
-    html,body{ height:100%; }
+    *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 15% -10%, rgba(124,58,237,.25), transparent 65%),
-                  radial-gradient(1000px 700px at 85% 0%, rgba(6,182,212,.18), transparent 60%),
+      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(34,197,94,.14), transparent 60%),
+                  radial-gradient(900px 500px at 90% 20%, rgba(59,130,246,.12), transparent 55%),
                   var(--bg);
       color: var(--text);
-      letter-spacing: .2px;
     }
 
-    a{ color: inherit; text-decoration: none; }
-    .wrap{
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 20px 80px;
+    .container{
+      max-width:1200px;
+      margin:0 auto;
+      padding:28px 22px 50px;
     }
 
+    /* Top bar */
     .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: 14px;
-      margin-bottom: 18px;
+      gap:16px;
+      padding:10px 0 22px;
     }
     .brand{
-      display:flex; align-items:center; gap:12px;
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
     .logo{
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(6,182,212,.75));
-      box-shadow: 0 16px 40px rgba(124,58,237,.22);
+      width:36px;height:36px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(34,197,94,.95), rgba(59,130,246,.85));
+      box-shadow: var(--shadow);
     }
     .brand h1{
-      font-size: 18px; margin:0; font-weight: 750;
-      letter-spacing: .6px;
+      margin:0;
+      font-size:18px;
+      letter-spacing:.4px;
     }
-    .brand .sub{
-      font-size: 12px; color: var(--muted2); margin-top: 2px;
+    .brand span{
+      display:block;
+      margin-top:2px;
+      font-size:12px;
+      color:var(--muted);
     }
-    .actions{
-      display:flex; gap:10px; flex-wrap: wrap;
+
+    .nav{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
     }
     .btn{
+      appearance:none;
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.04);
       color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
       cursor:pointer;
-      transition: .15s ease;
-      user-select:none;
-      font-weight: 600;
-      font-size: 13px;
+      font-weight:600;
+      font-size:13px;
     }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
+    .btn:hover{ filter: brightness(1.08); }
     .btn.primary{
-      background: linear-gradient(135deg, rgba(124,58,237,.95), rgba(6,182,212,.75));
-      border-color: rgba(255,255,255,.14);
-      box-shadow: 0 18px 48px rgba(124,58,237,.18);
+      border:1px solid rgba(34,197,94,.40);
+      background: rgba(34,197,94,.16);
     }
-    .btn.primary:hover{ filter: brightness(1.05); }
     .btn.ghost{
       background: transparent;
     }
+    .btn.active{
+      border-color: rgba(59,130,246,.45);
+      background: rgba(59,130,246,.14);
+    }
 
+    /* Headings */
+    .heroTitle{
+      font-size:56px;
+      font-weight:800;
+      margin:14px 0 6px;
+      letter-spacing:.6px;
+    }
+    .heroSub{
+      color:var(--muted);
+      margin:0 0 26px;
+      font-size:18px;
+    }
+
+    /* Cards */
     .grid{
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 16px;
-      margin-top: 14px;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap:18px;
     }
-    @media (max-width: 980px){
+    @media (max-width: 1000px){
+      .grid{ grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      .heroTitle{ font-size:44px; }
+    }
+    @media (max-width: 520px){
       .grid{ grid-template-columns: 1fr; }
+      .heroTitle{ font-size:38px; }
     }
 
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
-      border: 1px solid var(--stroke);
-      border-radius: var(--radius);
-      padding: 18px;
+    .card{
+      background: rgba(17,24,39,.75);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      padding:22px 22px;
       box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
+      backdrop-filter: blur(10px);
     }
-    .panel::before{
-      content:"";
-      position:absolute; inset:-1px;
-      background: radial-gradient(900px 220px at 20% 0%, rgba(124,58,237,.14), transparent 60%),
-                  radial-gradient(900px 220px at 80% 0%, rgba(6,182,212,.10), transparent 60%);
-      pointer-events:none;
+    .label{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:10px;
+      letter-spacing:.2px;
+    }
+    .big-number{
+      font-size:48px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .big-number.small{
+      font-size:40px;
+    }
+
+    /* Pages */
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    .section{
+      background: rgba(17,24,39,.65);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px;
+      padding:18px;
+      box-shadow: var(--shadow);
+    }
+    .section h3{
+      margin:0 0 10px;
+      font-size:16px;
+    }
+
+    .pageTitle{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin: 6px 0 14px;
+    }
+    .pageTitle h2{
+      margin:0;
+      font-size:22px;
+    }
+    .pageTitle p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .badge{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .badge.warn{
+      border-color: rgba(245,158,11,.35);
+      background: rgba(245,158,11,.12);
+      color: #ffd79a;
+    }
+
+    .muted{ color: var(--muted); }
+    .hint{ color: var(--muted); font-size:12px; margin:12px 0 0; }
+
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+      margin-top:10px;
+    }
+    @media (max-width: 1000px){
+      .twoCol{ grid-template-columns: 1fr; }
+    }
+
+    pre{
+      white-space: pre-wrap;
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:13px;
+      line-height:1.55;
+      color: var(--text);
+    }
+
+    input, textarea, select{
+      width:100%;
+    }
+
+    .footer{
+      margin-top:22px;
+      color: var(--muted);
+      font-size:12px;
       opacity:.9;
     }
-    .panel > *{ position:relative; }
-
-    .section-title{
-      display:flex; align-items:flex-end; justify-content:space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    .section-title h2{
-      font-size: 14px;
-      margin: 0;
-      font-weight: 750;
-      letter-spacing: .4px;
-    }
-    .section-title .hint{
-      font-size: 12px;
-      color: var(--muted2);
-      line-height: 1.2;
-    }
-
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 10px;
-    }
-    @media (max-width: 980px){
-      .kpis{ grid-template-columns: repeat(2, 1fr); }
-    }
-    .kpi{
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--stroke);
-      border-radius: 16px;
-      padding: 14px;
-    }
-    .kpi .label{ font-size: 12px; color: var(--muted2); }
-    .kpi .value{
-      margin-top: 6px;
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: .3px;
-    }
-    .kpi .delta{
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .form{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    @media (max-width: 640px){
-      .form{ grid-template-columns: 1fr; }
-    }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
-    label{
-      font-size: 12px;
-      color: var(--muted2);
-    }
-    input, select, textarea{
-      background: rgba(0,0,0,.18);
-      border: 1px solid var(--stroke);
-      border-radius: 14px;
-      padding: 10px 12px;
-      color: var(--text);
-      outline: none;
-      font-size: 13px;
-    }
-    textarea{
-      min-height: 110px;
-      resize: vertical;
-      line-height: 1.35;
-    }
-    input::placeholder, textarea::placeholder{ color: rgba(255,255,255,.35); }
-
-    .row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-      margin-top: 10px;
-    }
-    .badge{
-      font-size: 12px;
-      color: rgba(255,255,255,.7);
-      background: rgba(255,255,255,.06);
-      border: 1px solid var(--stroke);
-      border-radius: 999px;
-      padding: 6px 10px;
-      white-space: nowrap;
-    }
-
-    table{
-      width:100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid var(--stroke);
-      border-radius: 14px;
-      overflow:hidden;
-    }
-    th, td{
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      font-size: 13px;
-      text-align: left;
-      vertical-align: middle;
-    }
-    th{
-      color: rgba(255,255,255,.7);
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: .3px;
-      background: rgba(255,255,255,.03);
-    }
-    tr:last-child td{ border-bottom:none; }
-
-    .mini{
-      font-size: 12px;
-      color: var(--muted2);
-      margin-top: 10px;
-      line-height: 1.35;
-    }
-    .pill{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--stroke);
-      font-size: 12px;
-      color: rgba(255,255,255,.78);
-    }
-
-    .hr{
-      height: 1px;
-      background: rgba(255,255,255,.08);
-      margin: 14px 0;
-    }
-
-    .toast{
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 18px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.12);
-      color: rgba(255,255,255,.9);
-      font-size: 13px;
-      box-shadow: 0 18px 48px rgba(0,0,0,.35);
-      opacity: 0;
-      pointer-events: none;
-      transition: .18s ease;
-    }
-    .toast.show{
-      opacity: 1;
-      transform: translateX(-50%) translateY(-2px);
-    }
-
-    /* small icons */
-    .ic{ width:14px; height:14px; display:inline-block; }
-    .muted{ color: var(--muted2); }
   </style>
-
-  <!-- PDF libs (client-side) -->
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="container">
+    <!-- TOPBAR -->
     <div class="topbar">
       <div class="brand">
         <div class="logo"></div>
         <div>
           <h1>BILLION</h1>
-          <div class="sub">Advisor OS · Reportes maestros · Operación RIA</div>
+          <span>Advisor OS • RIA-first</span>
         </div>
       </div>
 
-      <div class="actions">
-        <button class="btn ghost" id="btnLoadSample">Cargar ejemplo</button>
-        <button class="btn" id="btnRecalc">Recalcular</button>
-        <button class="btn primary" id="btnPdf">Generar PDF (listo para cliente)</button>
+      <div class="nav">
+        <button class="btn active" id="navDashboard">Dashboard</button>
+        <button class="btn" id="navReports">Reports</button>
       </div>
     </div>
 
-    <!-- KPI ROW -->
-    <div class="panel">
-      <div class="section-title">
-        <h2>Dashboard (MVP)</h2>
-        <div class="hint">Hoy: reporte en PDF para clientes. Fase 2: parsing automático de LSEG.</div>
-      </div>
+    <!-- PAGE: DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="heroTitle">BILLION</div>
+      <div class="heroSub">Financial Intelligence for RIAs and Smart Investors</div>
 
-      <div class="kpis">
-        <div class="kpi">
+      <div class="grid">
+        <div class="card">
           <div class="label">Portfolio Value</div>
-          <div class="value" id="kpiValue">$0</div>
-          <div class="delta" id="kpiValueNote">Calculado desde holdings</div>
+          <div class="big-number">$3,698</div>
         </div>
-        <div class="kpi">
+
+        <div class="card">
           <div class="label">Daily P&amp;L</div>
-          <div class="value" id="kpiDaily">0.00%</div>
-          <div class="delta muted" id="kpiDailyNote">Manual (por ahora)</div>
+          <div class="big-number small">-0.43%</div>
         </div>
-        <div class="kpi">
+
+        <div class="card">
           <div class="label">AI Risk Score</div>
-          <div class="value" id="kpiRisk">72 / 100</div>
-          <div class="delta" id="kpiRiskNote">Regla simple MVP</div>
+          <div class="big-number small">72 / 100</div>
         </div>
-        <div class="kpi">
+
+        <div class="card">
           <div class="label">Benchmark vs QQQ</div>
-          <div class="value" id="kpiBench">+0.00%</div>
-          <div class="delta muted" id="kpiBenchNote">Manual (por ahora)</div>
+          <div class="big-number small">+1.8%</div>
         </div>
       </div>
 
-      <div class="mini">
-        <span class="pill">📌 Benchmark por defecto: <b>QQQ</b></span>
-        <span class="pill">🧾 Salida: <b>PDF</b> listo para enviar al cliente</span>
-        <span class="pill">🔒 Sin backend (ideal para empezar rápido)</span>
-      </div>
-    </div>
+      <div class="footer">MVP: Dashboard + Reporte Maestro. Próximo: parsing PDF, métricas, benchmark real, y export.</div>
+    </section>
 
-    <div class="grid">
-      <!-- LEFT: Holdings + Portfolio -->
-      <div class="panel">
-        <div class="section-title">
-          <h2>Portafolio · Holdings</h2>
-          <div class="hint">Edita tabla → recalcula pesos → PDF incluye resumen y tabla.</div>
+    <!-- PAGE: REPORTS -->
+    <section class="page" id="page-reports">
+      <div class="pageTitle">
+        <div>
+          <h2>Reports</h2>
+          <p>Genera un Reporte Maestro (RIA) desde datos del PDF LSEG (manual por ahora).</p>
         </div>
+        <div class="badge warn">Manual → Auto</div>
+      </div>
 
-        <div class="form">
-          <div class="field">
-            <label>Nombre del Portafolio</label>
-            <input id="portfolioName" placeholder="Marcelo · Growth / High Risk" />
+      <div class="twoCol">
+        <div class="section">
+          <h3>Input (LSEG → Manual)</h3>
+          <p class="muted" style="margin-top:0">
+            Copia los datos clave del PDF y pégalos aquí. (Fase 2: parsing automático del PDF.)
+          </p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+            <input id="r_ticker" placeholder="Ticker (ej: RACE)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+            <input id="r_name" placeholder="Nombre (ej: Ferrari N.V.)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+
+            <input id="r_price" placeholder="Precio (ej: 450.20)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+            <input id="r_mcap" placeholder="Market Cap (ej: 80B)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+
+            <input id="r_52w" placeholder="52W Range (ej: 380–480)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+            <input id="r_pe" placeholder="P/E (TTM / FWD) (ej: 45 / 38)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+
+            <input id="r_roe" placeholder="ROE (ej: 32%)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+            <input id="r_rev" placeholder="Ingresos anuales (ej: 6.0B)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
           </div>
-          <div class="field">
-            <label>Benchmark</label>
-            <select id="benchmark">
-              <option value="QQQ" selected>QQQ</option>
-              <option value="SPY">SPY</option>
-              <option value="VT">VT</option>
-              <option value="Custom">Custom</option>
+
+          <div style="margin-top:12px; display:grid; gap:10px">
+            <textarea id="r_overview" rows="3" placeholder="Perspectiva General (2–4 líneas)..." style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;resize:vertical;"></textarea>
+            <textarea id="r_analysis" rows="4" placeholder="Análisis y Comentarios (eventos recientes, resultados, valoración)..." style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;resize:vertical;"></textarea>
+
+            <textarea id="r_pos" rows="3" placeholder="Puntos Positivos (uno por línea)..." style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;resize:vertical;"></textarea>
+            <textarea id="r_neg" rows="3" placeholder="Puntos Negativos (uno por línea)..." style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;resize:vertical;"></textarea>
+          </div>
+
+          <div style="margin-top:12px; display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+            <select id="r_rating" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
+              <option value="Mantener">Recomendación: Mantener</option>
+              <option value="Comprar">Recomendación: Comprar</option>
+              <option value="Vender">Recomendación: Vender</option>
             </select>
+            <input id="r_profile" placeholder="Perfil (ej: Growth / Alto riesgo / Largo plazo)" style="padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.04);color:var(--text);outline:none;">
           </div>
 
-          <div class="field">
-            <label>Daily P&amp;L (%)</label>
-            <input id="dailyPnlPct" placeholder="-0.43" />
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn primary" id="btnBuildReport">Generate Report</button>
+            <button class="btn ghost" id="btnCopyReport">Copy</button>
+            <button class="btn ghost" id="btnClearReport">Clear</button>
           </div>
-          <div class="field">
-            <label>Vs Benchmark (%)</label>
-            <input id="benchDeltaPct" placeholder="+1.80" />
-          </div>
+
+          <p class="hint">Tip: si no tienes un dato, déjalo vacío. El reporte igual sale.</p>
         </div>
 
-        <div class="hr"></div>
+        <div class="section">
+          <h3>Reporte Maestro (Output)</h3>
+          <p class="muted" style="margin-top:0">Se genera aquí listo para cliente / CRM.</p>
 
-        <div class="row">
-          <div class="badge">Holdings (edita shares / price)</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn" id="btnAddRow">+ Agregar</button>
-            <button class="btn" id="btnClearRows">Limpiar</button>
+          <div class="card" style="margin-top:10px; box-shadow:none">
+            <pre id="reportOut"></pre>
           </div>
-        </div>
-
-        <table id="holdingsTable">
-          <thead>
-            <tr>
-              <th style="width: 18%;">Ticker</th>
-              <th style="width: 30%;">Nombre</th>
-              <th style="width: 14%;">Shares</th>
-              <th style="width: 16%;">Price</th>
-              <th style="width: 12%;">Value</th>
-              <th style="width: 10%;">Peso</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-
-        <div class="mini">
-          📌 MVP: sin precios en tiempo real. Tú pones price (o lo sacas del broker) y BILLION arma el reporte y PDF.  
-          En fase 2 conectamos data (API / LSEG / broker) para automatizar.
         </div>
       </div>
 
-      <!-- RIGHT: Report Builder -->
-      <div class="panel">
-        <div class="section-title">
-          <h2>Reporte Maestro · Builder</h2>
-          <div class="hint">Formato “reporte maestro” listo para clientes.</div>
-        </div>
-
-        <div class="form">
-          <div class="field">
-            <label>Cliente</label>
-            <input id="clientName" placeholder="Cliente / Cuenta" />
-          </div>
-          <div class="field">
-            <label>Asesor / RIA</label>
-            <input id="advisorName" placeholder="Aragon Capital / Marcelo" />
-          </div>
-          <div class="field">
-            <label>Fecha del reporte</label>
-            <input id="reportDate" placeholder="Febrero 2026" />
-          </div>
-          <div class="field">
-            <label>Ticket principal (si aplica)</label>
-            <input id="primaryTicker" placeholder="Ej. RACE" />
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="field">
-          <label>Perspectiva General (compañía, sector, posición competitiva)</label>
-          <textarea id="overview" placeholder="Escribe un párrafo corto, claro y profesional..."></textarea>
-        </div>
-
-        <div class="field" style="margin-top:10px;">
-          <label>Análisis y Comentarios (contexto reciente, desempeño, eventos, valoración)</label>
-          <textarea id="analysis" placeholder="Puntos clave + narrativa de 6–10 líneas..."></textarea>
-        </div>
-
-        <div class="form" style="margin-top:10px;">
-          <div class="field">
-            <label>Puntos Positivos (separados por salto de línea)</label>
-            <textarea id="pros" placeholder="• ...&#10;• ...&#10;• ..."></textarea>
-          </div>
-          <div class="field">
-            <label>Puntos Negativos (separados por salto de línea)</label>
-            <textarea id="cons" placeholder="• ...&#10;• ...&#10;• ..."></textarea>
-          </div>
-        </div>
-
-        <div class="field" style="margin-top:10px;">
-          <label>Conclusión y Recomendación</label>
-          <textarea id="conclusion" placeholder="Postura sugerida (mantener/comprar/vender) + por qué + perfil de inversor..."></textarea>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="row">
-          <div class="badge">Datos clave del ticket (manual por ahora)</div>
-          <button class="btn" id="btnAddKeyRow">+ Añadir dato</button>
-        </div>
-
-        <table id="keyDataTable">
-          <thead>
-            <tr>
-              <th style="width: 45%;">Métrica</th>
-              <th style="width: 55%;">Valor</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-
-        <div class="mini">
-          Tip: Si tienes el PDF de LSEG abierto, copia/pega valores aquí.  
-          Hoy dejamos el flujo “manual → PDF”. Luego automatizamos el parsing.
-        </div>
-      </div>
-    </div>
+      <div class="footer">Siguiente: “Paste PDF text → Auto-fill”, export a PDF/Doc, y guardado por cliente.</div>
+    </section>
   </div>
 
-  <div class="toast" id="toast">Listo</div>
-
   <script>
-    // ---------- Helpers ----------
-    const $ = (id) => document.getElementById(id);
+    // -------- NAV ----------
+    const pageDashboard = document.getElementById('page-dashboard');
+    const pageReports   = document.getElementById('page-reports');
+    const navDashboard  = document.getElementById('navDashboard');
+    const navReports    = document.getElementById('navReports');
 
-    function toast(msg){
-      const t = $("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(()=> t.classList.remove("show"), 1600);
+    function showPage(which){
+      const isDash = which === 'dashboard';
+      pageDashboard.classList.toggle('active', isDash);
+      pageReports.classList.toggle('active', !isDash);
+      navDashboard.classList.toggle('active', isDash);
+      navReports.classList.toggle('active', !isDash);
     }
 
-    function fmtUSD(n){
-      const v = Number(n || 0);
-      return v.toLocaleString("en-US", { style:"currency", currency:"USD", maximumFractionDigits: 0 });
-    }
-    function fmtUSD2(n){
-      const v = Number(n || 0);
-      return v.toLocaleString("en-US", { style:"currency", currency:"USD", maximumFractionDigits: 2 });
-    }
-    function fmtPct(n){
-      const v = Number(n || 0);
-      const s = (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
-      return s;
+    navDashboard?.addEventListener('click', () => showPage('dashboard'));
+    navReports?.addEventListener('click', () => showPage('reports'));
+
+    // -------- REPORT BUILDER (MVP) ----------
+    function v(id){ return (document.getElementById(id)?.value || '').trim(); }
+
+    function linesToBullets(txt){
+      const arr = txt.split('\n').map(s => s.trim()).filter(Boolean);
+      if(arr.length === 0) return '—';
+      return arr.map(x => `- ${x}`).join('\n');
     }
 
-    function safeText(s){
-      return String(s || "").replace(/\s+/g, " ").trim();
+    function buildReport(){
+      const ticker = v('r_ticker') || 'TICKER';
+      const name = v('r_name') || 'Company Name';
+
+      const price = v('r_price');
+      const mcap  = v('r_mcap');
+      const range52 = v('r_52w');
+      const pe = v('r_pe');
+      const roe = v('r_roe');
+      const rev = v('r_rev');
+
+      const overview = v('r_overview') || '—';
+      const analysis  = v('r_analysis') || '—';
+      const positives = linesToBullets(v('r_pos'));
+      const negatives = linesToBullets(v('r_neg'));
+
+      const rating = v('r_rating') || 'Mantener';
+      const profile = v('r_profile') || '—';
+
+      const refDate = new Date().toLocaleDateString();
+
+      const keyData = [
+        `Fecha de referencia: ${refDate}`,
+        price ? `Último precio: ${price}` : null,
+        mcap ? `Capitalización de mercado: ${mcap}` : null,
+        range52 ? `Rango 52 semanas: ${range52}` : null,
+        pe ? `P/E (TTM / Forward): ${pe}` : null,
+        roe ? `ROE: ${roe}` : null,
+        rev ? `Ingresos anuales: ${rev}` : null
+      ].filter(Boolean).map(x => `- ${x}`).join('\n') || '—';
+
+      const out =
+`**${name} (${ticker})**
+
+**1. Perspectiva General**
+${overview}
+
+**2. Datos Clave del Ticker**
+${keyData}
+
+**3. Análisis y Comentarios**
+${analysis}
+
+**4. Puntos Positivos**
+${positives}
+
+**5. Puntos Negativos**
+${negatives}
+
+**6. Conclusión y Recomendación**
+Recomendación: **${rating}**
+Perfil de inversor adecuado: ${profile}
+`;
+
+      const el = document.getElementById('reportOut');
+      if(el) el.textContent = out;
     }
 
-    // ---------- Holdings table ----------
-    function addHoldingRow(row = { ticker:"", name:"", shares:"", price:"" }){
-      const tbody = $("holdingsTable").querySelector("tbody");
-      const tr = document.createElement("tr");
+    document.getElementById('btnBuildReport')?.addEventListener('click', buildReport);
 
-      tr.innerHTML = `
-        <td><input data-k="ticker" placeholder="AAPL" value="${row.ticker ?? ""}" /></td>
-        <td><input data-k="name" placeholder="Apple Inc." value="${row.name ?? ""}" /></td>
-        <td><input data-k="shares" inputmode="decimal" placeholder="10" value="${row.shares ?? ""}" /></td>
-        <td><input data-k="price" inputmode="decimal" placeholder="263.28" value="${row.price ?? ""}" /></td>
-        <td class="valCell">$0</td>
-        <td class="wtCell">0.0%</td>
-      `;
-
-      // style inputs inside tables
-      tr.querySelectorAll("input").forEach(inp=>{
-        inp.style.width = "100%";
-        inp.style.padding = "8px 10px";
-        inp.style.borderRadius = "12px";
-        inp.addEventListener("input", ()=> recalc());
-      });
-
-      tbody.appendChild(tr);
-      recalc();
-    }
-
-    function readHoldings(){
-      const rows = [...$("holdingsTable").querySelectorAll("tbody tr")];
-      const data = rows.map(tr=>{
-        const ticker = tr.querySelector('input[data-k="ticker"]').value.trim().toUpperCase();
-        const name   = tr.querySelector('input[data-k="name"]').value.trim();
-        const shares = Number(tr.querySelector('input[data-k="shares"]').value || 0);
-        const price  = Number(tr.querySelector('input[data-k="price"]').value || 0);
-        const value  = shares * price;
-        return { ticker, name, shares, price, value, _tr: tr };
-      }).filter(r => r.ticker || r.name || r.shares || r.price);
-      return data;
-    }
-
-    // Simple MVP risk score:
-    // - Concentration penalty: top weight > 35% hurts
-    // - Single-name count vs ETFs
-    function computeRiskScore(holdings){
-      if(!holdings.length) return 72;
-      const total = holdings.reduce((a,b)=> a + b.value, 0) || 1;
-      const weights = holdings.map(h => h.value/total).sort((a,b)=> b-a);
-      const top = weights[0] || 0;
-      const top2 = (weights[0]||0) + (weights[1]||0);
-
-      const etfCount = holdings.filter(h => ["QQQ","SPY","VT","IVV","VOO","DIA","IWM","EFA","EEM","URA","GLD","SLV","TLT","PLTM"].includes(h.ticker)).length;
-      const singleCount = holdings.length - etfCount;
-
-      let score = 85;
-      if(top > 0.35) score -= (top - 0.35) * 120;     // strong penalty
-      if(top2 > 0.55) score -= (top2 - 0.55) * 80;
-      if(singleCount >= 6) score -= 8;
-      if(singleCount >= 10) score -= 8;
-
-      score = Math.max(1, Math.min(99, Math.round(score)));
-      return score;
-    }
-
-    function recalc(){
-      const holdings = readHoldings();
-      const total = holdings.reduce((a,b)=> a + b.value, 0);
-
-      // Update table
-      holdings.forEach(h=>{
-        const w = total ? (h.value/total) : 0;
-        h._tr.querySelector(".valCell").textContent = fmtUSD2(h.value);
-        h._tr.querySelector(".wtCell").textContent  = (w*100).toFixed(1) + "%";
-      });
-
-      // KPIs
-      $("kpiValue").textContent = fmtUSD(total);
-      const dp = Number(($("dailyPnlPct").value || "0").replace("%",""));
-      $("kpiDaily").textContent = (isFinite(dp) ? fmtPct(dp) : "0.00%");
-
-      const bd = Number(($("benchDeltaPct").value || "0").replace("%",""));
-      $("kpiBench").textContent = (isFinite(bd) ? fmtPct(bd) : "+0.00%");
-
-      const risk = computeRiskScore(holdings);
-      $("kpiRisk").textContent = `${risk} / 100`;
-      $("kpiRiskNote").textContent = risk >= 80 ? "Riesgo moderado" : (risk >= 60 ? "Riesgo elevado" : "Riesgo alto (concentración)");
-
-      return { holdings, total, dp, bd, risk };
-    }
-
-    // ---------- Key Data table ----------
-    function addKeyRow(row = { metric:"", value:"" }){
-      const tbody = $("keyDataTable").querySelector("tbody");
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input data-k="metric" placeholder="Market Cap" value="${row.metric ?? ""}" /></td>
-        <td><input data-k="value" placeholder="$..." value="${row.value ?? ""}" /></td>
-      `;
-      tr.querySelectorAll("input").forEach(inp=>{
-        inp.style.width = "100%";
-        inp.style.padding = "8px 10px";
-        inp.style.borderRadius = "12px";
-      });
-      tbody.appendChild(tr);
-    }
-
-    function readKeyData(){
-      const rows = [...$("keyDataTable").querySelectorAll("tbody tr")];
-      return rows.map(tr=>{
-        const metric = tr.querySelector('input[data-k="metric"]').value.trim();
-        const value  = tr.querySelector('input[data-k="value"]').value.trim();
-        return { metric, value };
-      }).filter(r => r.metric || r.value);
-    }
-
-    // ---------- PDF Generation ----------
-    async function generatePdf(){
-      const { holdings, total, dp, bd, risk } = recalc();
-
-      const clientName  = safeText($("clientName").value) || "Cliente";
-      const advisorName = safeText($("advisorName").value) || "Asesor";
-      const reportDate  = safeText($("reportDate").value) || new Date().toLocaleDateString("es-MX");
-      const portfolioName = safeText($("portfolioName").value) || "Portafolio";
-      const benchmark = $("benchmark").value || "QQQ";
-      const primaryTicker = safeText($("primaryTicker").value).toUpperCase();
-
-      const overview   = $("overview").value.trim();
-      const analysis   = $("analysis").value.trim();
-      const pros       = $("pros").value.trim();
-      const cons       = $("cons").value.trim();
-      const conclusion = $("conclusion").value.trim();
-      const keyData    = readKeyData();
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ unit:"pt", format:"letter" });
-
-      // Theme-ish
-      const M = { left: 54, right: 54, top: 54, bottom: 54 };
-      const pageW = doc.internal.pageSize.getWidth();
-      const pageH = doc.internal.pageSize.getHeight();
-      const contentW = pageW - M.left - M.right;
-
-      function header(title, subtitle){
-        doc.setFont("helvetica","bold");
-        doc.setFontSize(18);
-        doc.text(title, M.left, M.top);
-
-        doc.setFont("helvetica","normal");
-        doc.setFontSize(10);
-        doc.setTextColor(80);
-        doc.text(subtitle, M.left, M.top + 18);
-        doc.setTextColor(0);
+    document.getElementById('btnCopyReport')?.addEventListener('click', async () => {
+      const txt = document.getElementById('reportOut')?.textContent || '';
+      if(!txt.trim()){ alert('Primero genera el reporte.'); return; }
+      try{
+        await navigator.clipboard.writeText(txt);
+        alert('Copiado.');
+      }catch(e){
+        alert('No se pudo copiar. Selecciona y copia manualmente.');
       }
-
-      function sectionTitle(txt, y){
-        doc.setFont("helvetica","bold");
-        doc.setFontSize(12);
-        doc.text(txt, M.left, y);
-        doc.setDrawColor(230);
-        doc.line(M.left, y + 6, pageW - M.right, y + 6);
-        return y + 18;
-      }
-
-      function para(txt, y){
-        doc.setFont("helvetica","normal");
-        doc.setFontSize(10.5);
-        doc.setTextColor(30);
-        const lines = doc.splitTextToSize(txt || "—", contentW);
-        doc.text(lines, M.left, y);
-        doc.setTextColor(0);
-        return y + lines.length * 14;
-      }
-
-      // --- Page 1: Cover / Summary ---
-      header("BILLION — Reporte Maestro", `${clientName} · ${portfolioName} · ${reportDate}`);
-
-      let y = M.top + 54;
-
-      // Summary chips
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(11);
-      doc.text("Resumen Ejecutivo", M.left, y);
-      y += 14;
-
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(10.5);
-      const summary = [
-        `Valor de Portafolio: ${fmtUSD2(total)}`,
-        `Daily P&L: ${isFinite(dp) ? fmtPct(dp) : "—"}`,
-        `Benchmark (${benchmark}): ${isFinite(bd) ? fmtPct(bd) : "—"}`,
-        `AI Risk Score (MVP): ${risk}/100`,
-      ];
-      doc.text(summary, M.left, y);
-      y += 62;
-
-      // Holdings table
-      y = sectionTitle("Holdings (Resumen)", y);
-
-      const holdingsRows = holdings.map(h=>{
-        const w = total ? (h.value/total) : 0;
-        return [
-          h.ticker || "—",
-          h.name || "—",
-          String(h.shares ?? 0),
-          fmtUSD2(h.price ?? 0),
-          fmtUSD2(h.value ?? 0),
-          (w*100).toFixed(1) + "%"
-        ];
-      });
-
-      doc.autoTable({
-        startY: y,
-        head: [["Ticker","Nombre","Shares","Price","Value","Peso"]],
-        body: holdingsRows.length ? holdingsRows : [["—","—","—","—","—","—"]],
-        styles: { font: "helvetica", fontSize: 9.5, cellPadding: 6, overflow: "linebreak" },
-        headStyles: { fillColor: [245,245,245], textColor: 20 },
-        columnStyles: {
-          0:{ cellWidth: 62 },
-          1:{ cellWidth: 190 },
-          2:{ cellWidth: 52, halign:"right" },
-          3:{ cellWidth: 72, halign:"right" },
-          4:{ cellWidth: 78, halign:"right" },
-          5:{ cellWidth: 56, halign:"right" }
-        },
-        margin: { left: M.left, right: M.right }
-      });
-
-      y = doc.lastAutoTable.finalY + 18;
-
-      // Notes
-      doc.setFont("helvetica","italic");
-      doc.setFontSize(9);
-      doc.setTextColor(90);
-      doc.text(
-        "Nota: Este reporte es una salida MVP (manual → PDF). Fase 2: automatización con parsing de PDFs (LSEG) + LLM.",
-        M.left, y
-      );
-      doc.setTextColor(0);
-
-      // Footer
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(9);
-      doc.setTextColor(120);
-      doc.text(`Preparado por: ${advisorName}`, M.left, pageH - 36);
-      doc.text(`BILLION Advisor OS`, pageW - M.right, pageH - 36, { align:"right" });
-      doc.setTextColor(0);
-
-      // --- Page 2: Master Report for Primary Ticker (if provided) ---
-      doc.addPage();
-      header("Reporte Maestro por Ticket", `${primaryTicker || "—"} · ${clientName} · ${reportDate}`);
-
-      y = M.top + 54;
-      y = sectionTitle(`1) Título`, y);
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(12);
-      doc.text(`${primaryTicker || "TICKER"} — Reporte Maestro`, M.left, y);
-      y += 18;
-
-      y = sectionTitle("2) Perspectiva General", y);
-      y = para(overview, y) + 6;
-
-      y = sectionTitle("3) Datos Clave del Ticker", y);
-
-      // Key data table (manual)
-      const kdRows = keyData.map(k => [k.metric || "—", k.value || "—"]);
-      doc.autoTable({
-        startY: y,
-        head: [["Métrica","Valor"]],
-        body: kdRows.length ? kdRows : [["—","—"]],
-        styles: { font:"helvetica", fontSize: 10, cellPadding: 7, overflow:"linebreak" },
-        headStyles: { fillColor: [245,245,245], textColor: 20 },
-        columnStyles: { 0:{ cellWidth: 200 }, 1:{ cellWidth: 320 } },
-        margin: { left: M.left, right: M.right }
-      });
-      y = doc.lastAutoTable.finalY + 14;
-
-      y = sectionTitle("4) Análisis y Comentarios", y);
-      y = para(analysis, y) + 6;
-
-      y = sectionTitle("5) Puntos Positivos y Negativos", y);
-
-      const prosLines = (pros || "—").split("\n").map(s => s.trim()).filter(Boolean);
-      const consLines = (cons || "—").split("\n").map(s => s.trim()).filter(Boolean);
-
-      doc.setFont("helvetica","bold");
-      doc.setFontSize(10.5);
-      doc.text("Positivos:", M.left, y); y += 14;
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(10.5);
-      const prosText = prosLines.map(p => p.startsWith("•") ? p : "• " + p).join("\n");
-      const prosWrapped = doc.splitTextToSize(prosText, contentW);
-      doc.text(prosWrapped, M.left, y);
-      y += prosWrapped.length * 14 + 10;
-
-      doc.setFont("helvetica","bold");
-      doc.text("Negativos:", M.left, y); y += 14;
-      doc.setFont("helvetica","normal");
-      const consText = consLines.map(c => c.startsWith("•") ? c : "• " + c).join("\n");
-      const consWrapped = doc.splitTextToSize(consText, contentW);
-      doc.text(consWrapped, M.left, y);
-      y += consWrapped.length * 14 + 10;
-
-      y = sectionTitle("6) Conclusión y Recomendación", y);
-      y = para(conclusion, y);
-
-      // Footer page 2
-      doc.setFont("helvetica","normal");
-      doc.setFontSize(9);
-      doc.setTextColor(120);
-      doc.text(`Cliente: ${clientName}`, M.left, pageH - 36);
-      doc.text(`BILLION Advisor OS`, pageW - M.right, pageH - 36, { align:"right" });
-      doc.setTextColor(0);
-
-      // Save
-      const safeFile = `${(primaryTicker || "REPORTE").replace(/[^A-Z0-9_-]/g,"")}_${reportDate.replace(/[^0-9A-Za-z_-]/g,"-")}.pdf`;
-      doc.save(safeFile || "BILLION_REPORTE.pdf");
-      toast("PDF generado ✅");
-    }
-
-    // ---------- Sample Data ----------
-    function loadSample(){
-      $("clientName").value = "Marcelo (MVP interno)";
-      $("advisorName").value = "RIA / Marcelo";
-      $("reportDate").value = "Febrero 2026";
-      $("portfolioName").value = "Marcelo · High Risk";
-      $("dailyPnlPct").value = "-0.43";
-      $("benchDeltaPct").value = "+1.80";
-      $("primaryTicker").value = "RACE";
-
-      $("overview").value =
-`Ferrari N.V. (RACE) opera en el segmento de ultra-lujo automotriz con una marca globalmente dominante.
-Su ventaja competitiva se basa en escasez controlada, pricing power, y una base de clientes altamente resiliente.`;
-
-      $("analysis").value =
-`El caso de inversión se apoya en la combinación de crecimiento moderado y alta rentabilidad.
-Catalizadores típicos: expansión de mix de producto, personalización, disciplina de producción y fortaleza de marca.
-Riesgos: desaceleración macro en lujo, FX, y expectativas de múltiplos.`;
-
-      $("pros").value =
-`• Pricing power y marca “moat”
-• Base de clientes resiliente y demanda por exclusividad
-• Disciplina en producción y márgenes robustos`;
-
-      $("cons").value =
-`• Sensible a ciclos de lujo / confianza del consumidor
-• Riesgo de múltiplo (valoración exigente)
-• Dependencia de narrativa y ejecución`;
-
-      $("conclusion").value =
-`Conclusión: Mantener / Comprar en retrocesos, adecuado para perfil agresivo con horizonte largo.
-Recomendación sujeta a perfil del cliente y tolerancia a volatilidad.`;
-
-      // reset holdings
-      $("holdingsTable").querySelector("tbody").innerHTML = "";
-      [
-        { ticker:"AAPL", name:"Apple", shares:1, price:263.28 },
-        { ticker:"AUR", name:"Aurora Innovation", shares:10, price:4.67 },
-        { ticker:"B", name:"Barrick Gold", shares:15, price:47.72 },
-        { ticker:"HIMS", name:"Hims & Hers", shares:2, price:15.82 },
-        { ticker:"LMT", name:"Lockheed Martin", shares:1, price:658.36 },
-        { ticker:"PLTM", name:"GraniteShares Platinum Trust", shares:10, price:19.80 },
-        { ticker:"PLTR", name:"Palantir", shares:5, price:131.98 },
-        { ticker:"QQQ", name:"Invesco QQQ Trust", shares:1, price:602.67 },
-        { ticker:"SOFI", name:"SoFi", shares:10, price:19.25 },
-        { ticker:"URA", name:"Global X Uranium ETF", shares:4, price:52.01 },
-      ].forEach(addHoldingRow);
-
-      // key data sample
-      $("keyDataTable").querySelector("tbody").innerHTML = "";
-      [
-        { metric:"Fecha de referencia", value:"Febrero 2026" },
-        { metric:"Último precio de cierre", value:"(manual)" },
-        { metric:"Market Cap", value:"(manual)" },
-        { metric:"52W Range", value:"(manual)" },
-        { metric:"P/E (TTM / Forward)", value:"(manual)" },
-        { metric:"ROE", value:"(manual)" },
-        { metric:"Ingresos anuales", value:"(manual)" },
-        { metric:"Propiedad institucional", value:"(manual)" },
-        { metric:"Dividend yield", value:"(manual)" },
-      ].forEach(addKeyRow);
-
-      recalc();
-      toast("Ejemplo cargado ✅");
-    }
-
-    // ---------- Wire up ----------
-    $("btnAddRow").addEventListener("click", ()=> addHoldingRow());
-    $("btnClearRows").addEventListener("click", ()=>{
-      $("holdingsTable").querySelector("tbody").innerHTML = "";
-      recalc();
-      toast("Tabla limpia");
     });
 
-    $("btnAddKeyRow").addEventListener("click", ()=> addKeyRow());
-    $("btnRecalc").addEventListener("click", ()=> { recalc(); toast("Recalculado"); });
-    $("btnLoadSample").addEventListener("click", loadSample);
-    $("btnPdf").addEventListener("click", generatePdf);
-
-    // Default start
-    addHoldingRow({ ticker:"QQQ", name:"Invesco QQQ Trust", shares:1, price:602.67 });
-    addKeyRow({ metric:"Fecha de referencia", value:"(manual)" });
-    addKeyRow({ metric:"Último precio de cierre", value:"(manual)" });
-    recalc();
+    document.getElementById('btnClearReport')?.addEventListener('click', () => {
+      [
+        'r_ticker','r_name','r_price','r_mcap','r_52w','r_pe','r_roe','r_rev',
+        'r_overview','r_analysis','r_pos','r_neg','r_profile'
+      ].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+      });
+      const out = document.getElementById('reportOut');
+      if(out) out.textContent = '';
+    });
   </script>
 </body>
 </html>
