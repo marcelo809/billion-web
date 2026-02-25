@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BILLION — INVERNORD</title>
-  <meta name="description" content="BILLION — INVERNORD: reportes maestros listos para clientes" />
+  <title>BILLION — INVERNORD Reports</title>
 
   <style>
     :root{
@@ -17,7 +16,6 @@
       --radius:18px;
     }
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
     body{
       margin:0;
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -37,7 +35,8 @@
     }
     .brand h1{ font-size:18px; margin:0; font-weight:750; letter-spacing:.6px; }
     .brand .sub{ font-size:12px; color:var(--muted2); margin-top:2px; }
-    .actions{ display:flex; gap:10px; flex-wrap:wrap; }
+
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
     .btn{
       border:1px solid var(--stroke);
       background: rgba(255,255,255,.04);
@@ -59,6 +58,7 @@
       border-color: rgba(255,255,255,.14);
       box-shadow: 0 18px 48px rgba(124,58,237,.18);
     }
+
     .panel{
       background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
       border:1px solid var(--stroke);
@@ -84,14 +84,7 @@
     .section-title h2{ font-size:14px; margin:0; font-weight:750; letter-spacing:.4px; }
     .section-title .hint{ font-size:12px; color:var(--muted2); line-height:1.2; }
 
-    .kpis{ display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:10px; }
-    @media (max-width:980px){ .kpis{ grid-template-columns: repeat(2, 1fr); } }
-    .kpi{ background: rgba(255,255,255,.04); border:1px solid var(--stroke); border-radius:16px; padding:14px; }
-    .kpi .label{ font-size:12px; color:var(--muted2); }
-    .kpi .value{ margin-top:6px; font-size:26px; font-weight:800; letter-spacing:.3px; }
-    .kpi .delta{ margin-top:6px; font-size:12px; color:var(--muted); }
-
-    .grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:16px; }
+    .grid{ display:grid; grid-template-columns: .9fr 1.1fr; gap:16px; }
     @media (max-width:980px){ .grid{ grid-template-columns: 1fr; } }
 
     .form{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
@@ -100,7 +93,7 @@
     .field{ display:flex; flex-direction:column; gap:6px; }
     label{ font-size:12px; color:var(--muted2); }
 
-    input, select, textarea{
+    input, textarea, select{
       background: rgba(0,0,0,.18);
       border: 1px solid var(--stroke);
       border-radius: 14px;
@@ -110,18 +103,7 @@
       font-size: 13px;
     }
     textarea{ min-height: 110px; resize: vertical; line-height:1.35; }
-    input::placeholder, textarea::placeholder{ color: rgba(255,255,255,.35); }
 
-    .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:10px; }
-    .badge{
-      font-size:12px;
-      color: rgba(255,255,255,.7);
-      background: rgba(255,255,255,.06);
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      padding:6px 10px;
-      white-space:nowrap;
-    }
     .hr{ height:1px; background: rgba(255,255,255,.08); margin:14px 0; }
 
     table{
@@ -149,6 +131,43 @@
     }
     tr:last-child td{ border-bottom:none; }
 
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+    .item{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.03);
+      border-radius:16px;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .item .meta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .item .meta .t{
+      font-weight:750;
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .item .meta .s{
+      font-size:12px;
+      color:var(--muted2);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .item .controls{ display:flex; gap:8px; flex-wrap:wrap; }
     .mini{ font-size:12px; color:var(--muted2); margin-top:10px; line-height:1.35; }
 
     .toast{
@@ -168,7 +187,6 @@
       transition: .18s ease;
     }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(-2px); }
-    .muted{ color:var(--muted2); }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
@@ -182,106 +200,51 @@
         <div class="logo"></div>
         <div>
           <h1>BILLION</h1>
-          <div class="sub">INVERNORD · Reportes listos para clientes</div>
+          <div class="sub">INVERNORD · Generador de Reporte Maestro (MVP)</div>
         </div>
       </div>
       <div class="actions">
-        <button class="btn" id="btnRecalc">Recalcular</button>
+        <button class="btn" id="btnNew">+ Nuevo Reporte</button>
+        <button class="btn" id="btnSave">Guardar</button>
         <button class="btn primary" id="btnPdf">Generar PDF (cliente)</button>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="section-title">
-        <h2>Dashboard</h2>
-        <div class="hint">MVP: manual → PDF. Fase 2: parsing LSEG + LLM.</div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi">
-          <div class="label">Portfolio Value</div>
-          <div class="value" id="kpiValue">$0</div>
-          <div class="delta" id="kpiValueNote">Calculado desde holdings</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Daily P&L</div>
-          <div class="value" id="kpiDaily">0.00%</div>
-          <div class="delta muted">Manual</div>
-        </div>
-        <div class="kpi">
-          <div class="label">AI Risk Score</div>
-          <div class="value" id="kpiRisk">72 / 100</div>
-          <div class="delta" id="kpiRiskNote">Regla simple MVP</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Benchmark vs QQQ</div>
-          <div class="value" id="kpiBench">+0.00%</div>
-          <div class="delta muted">Manual</div>
-        </div>
-      </div>
-    </div>
-
     <div class="grid">
+      <!-- LEFT: Report list + PDF upload reference -->
       <div class="panel">
         <div class="section-title">
-          <h2>Portafolio · Holdings</h2>
-          <div class="hint">Edita shares/price → PDF incluye tabla.</div>
+          <h2>Reportes</h2>
+          <div class="hint">Cada PDF = un reporte nuevo (MVP: llenado manual)</div>
         </div>
 
-        <div class="form">
-          <div class="field">
-            <label>Nombre del Portafolio</label>
-            <input id="portfolioName" placeholder="Marcelo · High Risk" />
-          </div>
-          <div class="field">
-            <label>Benchmark</label>
-            <select id="benchmark">
-              <option value="QQQ" selected>QQQ</option>
-              <option value="SPY">SPY</option>
-              <option value="VT">VT</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Daily P&L (%)</label>
-            <input id="dailyPnlPct" placeholder="-0.43" />
-          </div>
-          <div class="field">
-            <label>Vs Benchmark (%)</label>
-            <input id="benchDeltaPct" placeholder="+1.80" />
-          </div>
+        <div class="field">
+          <label>Subir PDF de referencia (no parsea aún)</label>
+          <input type="file" id="pdfFile" accept="application/pdf" />
+        </div>
+        <div class="mini">
+          MVP: guardamos nombre del archivo y lo asociamos al reporte. Parsing automático viene en fase 2 (backend/Actions).
         </div>
 
         <div class="hr"></div>
 
-        <div class="row">
-          <div class="badge">Holdings</div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn" id="btnAddRow">+ Agregar</button>
-            <button class="btn" id="btnClearRows">Limpiar</button>
-          </div>
+        <div class="field">
+          <label>Buscar</label>
+          <input id="search" placeholder="Buscar por ticker o nombre..." />
         </div>
 
-        <table id="holdingsTable">
-          <thead>
-            <tr>
-              <th style="width:18%;">Ticker</th>
-              <th style="width:30%;">Nombre</th>
-              <th style="width:14%;">Shares</th>
-              <th style="width:16%;">Price</th>
-              <th style="width:12%;">Value</th>
-              <th style="width:10%;">Peso</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <div class="list" id="reportList"></div>
 
-        <div class="mini">Sin precios en tiempo real: tú pegas los números reales.</div>
+        <div class="mini">
+          Tip: si algo se desacomoda, refresca y vuelve a abrir el reporte desde la lista.
+        </div>
       </div>
 
+      <!-- RIGHT: Report editor -->
       <div class="panel">
         <div class="section-title">
-          <h2>Reporte Maestro · PLTR</h2>
-          <div class="hint">INVERNORD · listo para cliente</div>
+          <h2>Editor · Reporte Maestro</h2>
+          <div class="hint"><span id="activeId">—</span></div>
         </div>
 
         <div class="form">
@@ -290,16 +253,24 @@
             <input id="clientName" placeholder="Cliente / Cuenta" />
           </div>
           <div class="field">
-            <label>Asesor / Firma</label>
-            <input id="advisorName" placeholder="INVERNORD" />
+            <label>Firma</label>
+            <input id="firmName" placeholder="INVERNORD" />
           </div>
           <div class="field">
-            <label>Fecha del reporte</label>
+            <label>Fecha</label>
             <input id="reportDate" placeholder="Febrero 2026" />
           </div>
           <div class="field">
-            <label>Ticket</label>
-            <input id="primaryTicker" placeholder="PLTR" />
+            <label>Ticker</label>
+            <input id="ticker" placeholder="PLTR" />
+          </div>
+          <div class="field">
+            <label>Nombre de la empresa</label>
+            <input id="company" placeholder="Palantir Technologies Inc." />
+          </div>
+          <div class="field">
+            <label>Archivo PDF (referencia)</label>
+            <input id="pdfName" placeholder="TICKER - 02 2026.pdf" />
           </div>
         </div>
 
@@ -307,52 +278,44 @@
 
         <div class="field">
           <label>Perspectiva General</label>
-          <textarea id="overview"></textarea>
+          <textarea id="overview" placeholder="Qué hace la empresa, sector, ventaja, etc."></textarea>
+        </div>
+
+        <div class="field" style="margin-top:10px;">
+          <label>Datos Clave del Ticker (uno por línea: Métrica: Valor)</label>
+          <textarea id="keyData" placeholder="Último cierre: USD ...&#10;Market Cap: ...&#10;P/E: ..."></textarea>
         </div>
 
         <div class="field" style="margin-top:10px;">
           <label>Análisis y Comentarios</label>
-          <textarea id="analysis"></textarea>
+          <textarea id="analysis" placeholder="Contexto reciente, drivers, riesgos, valoración..."></textarea>
         </div>
 
         <div class="form" style="margin-top:10px;">
           <div class="field">
             <label>Puntos Positivos (uno por línea)</label>
-            <textarea id="pros"></textarea>
+            <textarea id="pros" placeholder="• ..."></textarea>
           </div>
           <div class="field">
             <label>Puntos Negativos (uno por línea)</label>
-            <textarea id="cons"></textarea>
+            <textarea id="cons" placeholder="• ..."></textarea>
           </div>
         </div>
 
         <div class="field" style="margin-top:10px;">
           <label>Conclusión y Recomendación</label>
-          <textarea id="conclusion"></textarea>
+          <textarea id="conclusion" placeholder="Postura sugerida, perfil, horizonte..."></textarea>
         </div>
-
-        <div class="hr"></div>
-
-        <div class="row">
-          <div class="badge">Datos clave (manual)</div>
-          <button class="btn" id="btnAddKeyRow">+ Añadir dato</button>
-        </div>
-
-        <table id="keyDataTable">
-          <thead>
-            <tr>
-              <th style="width:45%;">Métrica</th>
-              <th style="width:55%;">Valor</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
 
         <div class="hr"></div>
 
         <div class="field">
           <label>Disclaimer regulatorio (sale en el PDF)</label>
           <textarea id="disclaimer"></textarea>
+        </div>
+
+        <div class="mini">
+          Cuando le des “Generar PDF”, se crea un PDF listo para cliente con formato limpio (INVERNORD).
         </div>
       </div>
     </div>
@@ -363,6 +326,10 @@
   <script>
     const $ = (id) => document.getElementById(id);
 
+    const STORAGE_KEY = "billion_reports_v1";
+    let reports = [];
+    let activeReportId = null;
+
     function toast(msg){
       const t = $("toast");
       t.textContent = msg;
@@ -370,133 +337,174 @@
       setTimeout(()=> t.classList.remove("show"), 1600);
     }
 
-    function fmtUSD2(n){
-      const v = Number(n || 0);
-      return v.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:2});
+    function uid(){
+      return "R" + Math.random().toString(16).slice(2) + Date.now().toString(16);
     }
-    function fmtUSD(n){
-      const v = Number(n || 0);
-      return v.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
-    }
-    function fmtPct(n){
-      const v = Number(n || 0);
-      return (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
-    }
-    function safeText(s){ return String(s || "").replace(/\s+/g," ").trim(); }
 
-    function addHoldingRow(row={ ticker:"", name:"", shares:"", price:"" }){
-      const tbody = $("holdingsTable").querySelector("tbody");
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input data-k="ticker" placeholder="PLTR" value="${row.ticker ?? ""}"></td>
-        <td><input data-k="name" placeholder="Palantir Technologies Inc." value="${row.name ?? ""}"></td>
-        <td><input data-k="shares" inputmode="decimal" placeholder="10" value="${row.shares ?? ""}"></td>
-        <td><input data-k="price" inputmode="decimal" placeholder="0.00" value="${row.price ?? ""}"></td>
-        <td class="valCell">$0</td>
-        <td class="wtCell">0.0%</td>
-      `;
-      tr.querySelectorAll("input").forEach(inp=>{
-        inp.style.width="100%";
-        inp.style.padding="8px 10px";
-        inp.style.borderRadius="12px";
-        inp.addEventListener("input", ()=> recalc());
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        reports = raw ? JSON.parse(raw) : [];
+      }catch(e){ reports = []; }
+    }
+
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    }
+
+    function defaultDisclaimer(){
+      return "Este reporte es únicamente informativo y no constituye una recomendación personalizada, oferta, invitación o solicitud para comprar o vender valores. El desempeño pasado no garantiza resultados futuros. Las opiniones y estimaciones reflejan el criterio de INVERNORD a la fecha del reporte y pueden cambiar sin previo aviso. Antes de invertir, evalúe sus objetivos, horizonte y tolerancia al riesgo y, de ser necesario, consulte a un asesor financiero y fiscal.";
+    }
+
+    function newReport(){
+      const r = {
+        id: uid(),
+        createdAt: new Date().toISOString(),
+        clientName: "",
+        firmName: "INVERNORD",
+        reportDate: new Date().toLocaleDateString("es-MX"),
+        ticker: "",
+        company: "",
+        pdfName: "",
+        overview: "",
+        keyData: "",
+        analysis: "",
+        pros: "",
+        cons: "",
+        conclusion: "",
+        disclaimer: defaultDisclaimer(),
+      };
+      reports.unshift(r);
+      activeReportId = r.id;
+      save();
+      renderList();
+      fillForm(r);
+      toast("Nuevo reporte creado");
+    }
+
+    function getActive(){
+      return reports.find(r => r.id === activeReportId) || null;
+    }
+
+    function fillForm(r){
+      $("activeId").textContent = r ? `ID: ${r.id}` : "—";
+      $("clientName").value = r?.clientName || "";
+      $("firmName").value = r?.firmName || "INVERNORD";
+      $("reportDate").value = r?.reportDate || "";
+      $("ticker").value = r?.ticker || "";
+      $("company").value = r?.company || "";
+      $("pdfName").value = r?.pdfName || "";
+      $("overview").value = r?.overview || "";
+      $("keyData").value = r?.keyData || "";
+      $("analysis").value = r?.analysis || "";
+      $("pros").value = r?.pros || "";
+      $("cons").value = r?.cons || "";
+      $("conclusion").value = r?.conclusion || "";
+      $("disclaimer").value = r?.disclaimer || defaultDisclaimer();
+    }
+
+    function pullForm(){
+      const r = getActive();
+      if(!r) return null;
+      r.clientName = $("clientName").value.trim();
+      r.firmName = $("firmName").value.trim() || "INVERNORD";
+      r.reportDate = $("reportDate").value.trim();
+      r.ticker = $("ticker").value.trim().toUpperCase();
+      r.company = $("company").value.trim();
+      r.pdfName = $("pdfName").value.trim();
+      r.overview = $("overview").value.trim();
+      r.keyData = $("keyData").value.trim();
+      r.analysis = $("analysis").value.trim();
+      r.pros = $("pros").value.trim();
+      r.cons = $("cons").value.trim();
+      r.conclusion = $("conclusion").value.trim();
+      r.disclaimer = $("disclaimer").value.trim() || defaultDisclaimer();
+      return r;
+    }
+
+    function renderList(){
+      const q = $("search").value.trim().toLowerCase();
+      const list = $("reportList");
+      list.innerHTML = "";
+
+      const filtered = reports.filter(r=>{
+        const hay = `${r.ticker} ${r.company} ${r.clientName} ${r.pdfName}`.toLowerCase();
+        return q ? hay.includes(q) : true;
       });
-      tbody.appendChild(tr);
-      recalc();
-    }
 
-    function readHoldings(){
-      const rows = [...$("holdingsTable").querySelectorAll("tbody tr")];
-      return rows.map(tr=>{
-        const ticker = tr.querySelector('input[data-k="ticker"]').value.trim().toUpperCase();
-        const name   = tr.querySelector('input[data-k="name"]').value.trim();
-        const shares = Number(tr.querySelector('input[data-k="shares"]').value || 0);
-        const price  = Number(tr.querySelector('input[data-k="price"]').value || 0);
-        const value  = shares * price;
-        return { ticker, name, shares, price, value, _tr: tr };
-      }).filter(r => r.ticker || r.name || r.shares || r.price);
-    }
+      if(!filtered.length){
+        const div = document.createElement("div");
+        div.className = "mini";
+        div.textContent = "No hay reportes todavía. Crea uno con “+ Nuevo Reporte”.";
+        list.appendChild(div);
+        return;
+      }
 
-    function computeRiskScore(holdings){
-      if(!holdings.length) return 72;
-      const total = holdings.reduce((a,b)=>a+b.value,0) || 1;
-      const weights = holdings.map(h=>h.value/total).sort((a,b)=>b-a);
-      const top = weights[0] || 0;
-      const top2 = (weights[0]||0)+(weights[1]||0);
+      filtered.forEach(r=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        const t = (r.ticker ? `${r.ticker}` : "Sin ticker") + (r.company ? ` — ${r.company}` : "");
+        const s = `${r.clientName || "Cliente"} · ${r.reportDate || "Sin fecha"} · ${r.pdfName || "Sin PDF"}`;
 
-      let score = 85;
-      if(top > 0.35) score -= (top - 0.35) * 120;
-      if(top2 > 0.55) score -= (top2 - 0.55) * 80;
-      score = Math.max(1, Math.min(99, Math.round(score)));
-      return score;
-    }
-
-    function recalc(){
-      const holdings = readHoldings();
-      const total = holdings.reduce((a,b)=>a+b.value,0);
-
-      holdings.forEach(h=>{
-        const w = total ? (h.value/total) : 0;
-        h._tr.querySelector(".valCell").textContent = fmtUSD2(h.value);
-        h._tr.querySelector(".wtCell").textContent  = (w*100).toFixed(1)+"%";
+        item.innerHTML = `
+          <div class="meta">
+            <div class="t">${escapeHtml(t)}</div>
+            <div class="s">${escapeHtml(s)}</div>
+          </div>
+          <div class="controls">
+            <button class="btn" data-open="${r.id}">Abrir</button>
+            <button class="btn" data-del="${r.id}">Borrar</button>
+          </div>
+        `;
+        list.appendChild(item);
       });
 
-      $("kpiValue").textContent = fmtUSD(total);
-
-      const dp = Number(($("dailyPnlPct").value||"0").replace("%",""));
-      $("kpiDaily").textContent = isFinite(dp) ? fmtPct(dp) : "0.00%";
-
-      const bd = Number(($("benchDeltaPct").value||"0").replace("%",""));
-      $("kpiBench").textContent = isFinite(bd) ? fmtPct(bd) : "+0.00%";
-
-      const risk = computeRiskScore(holdings);
-      $("kpiRisk").textContent = `${risk} / 100`;
-      $("kpiRiskNote").textContent = risk >= 80 ? "Riesgo moderado" : (risk >= 60 ? "Riesgo elevado" : "Riesgo alto");
-
-      return { holdings, total, dp, bd, risk };
-    }
-
-    function addKeyRow(row={ metric:"", value:"" }){
-      const tbody = $("keyDataTable").querySelector("tbody");
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><input data-k="metric" placeholder="Market Cap" value="${row.metric ?? ""}"></td>
-        <td><input data-k="value" placeholder="(manual)" value="${row.value ?? ""}"></td>
-      `;
-      tr.querySelectorAll("input").forEach(inp=>{
-        inp.style.width="100%";
-        inp.style.padding="8px 10px";
-        inp.style.borderRadius="12px";
+      list.querySelectorAll("button[data-open]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-open");
+          activeReportId = id;
+          const r = getActive();
+          fillForm(r);
+          toast("Reporte abierto");
+        });
       });
-      tbody.appendChild(tr);
+
+      list.querySelectorAll("button[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-del");
+          reports = reports.filter(r=>r.id !== id);
+          if(activeReportId === id) activeReportId = reports[0]?.id || null;
+          save();
+          renderList();
+          fillForm(getActive());
+          toast("Reporte borrado");
+        });
+      });
     }
 
-    function readKeyData(){
-      const rows = [...$("keyDataTable").querySelectorAll("tbody tr")];
-      return rows.map(tr=>{
-        const metric = tr.querySelector('input[data-k="metric"]').value.trim();
-        const value  = tr.querySelector('input[data-k="value"]').value.trim();
-        return { metric, value };
-      }).filter(r=>r.metric||r.value);
+    function escapeHtml(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function parseKeyDataLines(txt){
+      const lines = (txt || "").split("\n").map(l=>l.trim()).filter(Boolean);
+      return lines.map(l=>{
+        const idx = l.indexOf(":");
+        if(idx === -1) return [l, ""];
+        return [l.slice(0, idx).trim(), l.slice(idx+1).trim()];
+      });
     }
 
     async function generatePdf(){
-      const { holdings, total, dp, bd, risk } = recalc();
-
-      const clientName = safeText($("clientName").value) || "Cliente";
-      const advisorName = safeText($("advisorName").value) || "INVERNORD";
-      const reportDate = safeText($("reportDate").value) || new Date().toLocaleDateString("es-MX");
-      const portfolioName = safeText($("portfolioName").value) || "Portafolio";
-      const benchmark = $("benchmark").value || "QQQ";
-      const primaryTicker = safeText($("primaryTicker").value).toUpperCase() || "PLTR";
-
-      const overview = $("overview").value.trim() || "—";
-      const analysis = $("analysis").value.trim() || "—";
-      const pros = $("pros").value.trim() || "—";
-      const cons = $("cons").value.trim() || "—";
-      const conclusion = $("conclusion").value.trim() || "—";
-      const disclaimer = $("disclaimer").value.trim() || "—";
-      const keyData = readKeyData();
+      const r = pullForm();
+      if(!r){ toast("Crea/abre un reporte primero"); return; }
+      save();
+      renderList();
 
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit:"pt", format:"letter" });
@@ -530,69 +538,21 @@
         return y + lines.length * 14;
       }
 
-      // PAGE 1 (PORTAFOLIO)
-      header("INVERNORD — Reporte de Portafolio", `${clientName} · ${portfolioName} · ${reportDate}`);
+      const ticker = r.ticker || "TICKER";
+      const company = r.company || "Empresa";
+      const client = r.clientName || "Cliente";
+      const firm = r.firmName || "INVERNORD";
+      const date = r.reportDate || new Date().toLocaleDateString("es-MX");
+
+      // PAGE 1
+      header(`${firm} — Reporte Maestro`, `${ticker} · ${company} · ${client} · ${date}`);
 
       let y = M.top + 54;
-      doc.setFont("helvetica","bold"); doc.setFontSize(11);
-      doc.text("Resumen Ejecutivo", M.left, y); y += 14;
+      y = sectionTitle("1) Perspectiva General", y);
+      y = para(r.overview || "—", y) + 6;
 
-      doc.setFont("helvetica","normal"); doc.setFontSize(10.5);
-      doc.text([
-        `Valor de Portafolio: ${fmtUSD2(total)}`,
-        `Daily P&L: ${isFinite(dp) ? fmtPct(dp) : "—"}`,
-        `Benchmark (${benchmark}): ${isFinite(bd) ? fmtPct(bd) : "—"}`,
-        `AI Risk Score (MVP): ${risk}/100`,
-      ], M.left, y);
-      y += 62;
-
-      y = sectionTitle("Holdings (Resumen)", y);
-
-      const rows = holdings.map(h=>{
-        const w = total ? (h.value/total) : 0;
-        return [
-          h.ticker || "—",
-          h.name || "—",
-          String(h.shares ?? 0),
-          fmtUSD2(h.price ?? 0),
-          fmtUSD2(h.value ?? 0),
-          (w*100).toFixed(1) + "%"
-        ];
-      });
-
-      doc.autoTable({
-        startY: y,
-        head: [["Ticker","Nombre","Shares","Price","Value","Peso"]],
-        body: rows.length ? rows : [["—","—","—","—","—","—"]],
-        styles: { font:"helvetica", fontSize:9.5, cellPadding:6, overflow:"linebreak" },
-        headStyles: { fillColor:[245,245,245], textColor:20 },
-        columnStyles: { 0:{cellWidth:62}, 1:{cellWidth:190}, 2:{cellWidth:52,halign:"right"}, 3:{cellWidth:72,halign:"right"}, 4:{cellWidth:78,halign:"right"}, 5:{cellWidth:56,halign:"right"} },
-        margin: { left:M.left, right:M.right }
-      });
-
-      y = doc.lastAutoTable.finalY + 14;
-      y = sectionTitle("Disclaimer", y);
-      y = para(disclaimer, y);
-
-      doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(120);
-      doc.text(`Preparado por: ${advisorName}`, M.left, pageH - 36);
-      doc.text(`INVERNORD`, pageW - M.right, pageH - 36, { align:"right" });
-      doc.setTextColor(0);
-
-      // PAGE 2 (REPORTE MAESTRO TICKER)
-      doc.addPage();
-      header("INVERNORD — Reporte Maestro por Ticket", `${primaryTicker} · ${clientName} · ${reportDate}`);
-
-      y = M.top + 54;
-      y = sectionTitle("1) Título", y);
-      doc.setFont("helvetica","bold"); doc.setFontSize(12);
-      doc.text(`${primaryTicker} — Reporte Maestro`, M.left, y); y += 18;
-
-      y = sectionTitle("2) Perspectiva General", y);
-      y = para(overview, y) + 6;
-
-      y = sectionTitle("3) Datos Clave del Ticker", y);
-      const kd = keyData.map(k => [k.metric || "—", k.value || "—"]);
+      y = sectionTitle("2) Datos Clave del Ticker", y);
+      const kd = parseKeyDataLines(r.keyData);
       doc.autoTable({
         startY: y,
         head: [["Métrica","Valor"]],
@@ -604,13 +564,18 @@
       });
       y = doc.lastAutoTable.finalY + 14;
 
-      y = sectionTitle("4) Análisis y Comentarios", y);
-      y = para(analysis, y) + 6;
+      y = sectionTitle("3) Análisis y Comentarios", y);
+      y = para(r.analysis || "—", y) + 6;
 
-      y = sectionTitle("5) Puntos Positivos y Negativos", y);
+      // PAGE 2
+      doc.addPage();
+      header(`${firm} — Reporte Maestro`, `${ticker} · ${company} · ${client} · ${date}`);
 
-      const prosLines = pros.split("\n").map(s=>s.trim()).filter(Boolean);
-      const consLines = cons.split("\n").map(s=>s.trim()).filter(Boolean);
+      y = M.top + 54;
+      y = sectionTitle("4) Puntos Positivos y Negativos", y);
+
+      const prosLines = (r.pros || "").split("\n").map(s=>s.trim()).filter(Boolean);
+      const consLines = (r.cons || "").split("\n").map(s=>s.trim()).filter(Boolean);
 
       doc.setFont("helvetica","bold"); doc.setFontSize(10.5);
       doc.text("Positivos:", M.left, y); y += 14;
@@ -626,69 +591,59 @@
       doc.text(doc.splitTextToSize(cText, contentW), M.left, y);
       y += doc.splitTextToSize(cText, contentW).length * 14 + 10;
 
-      y = sectionTitle("6) Conclusión y Recomendación", y);
-      y = para(conclusion, y) + 6;
+      y = sectionTitle("5) Conclusión y Recomendación", y);
+      y = para(r.conclusion || "—", y) + 6;
 
       y = sectionTitle("Disclaimer", y);
-      y = para(disclaimer, y);
+      y = para(r.disclaimer || defaultDisclaimer(), y);
 
-      const safeFile = `${primaryTicker}_${reportDate.replace(/[^0-9A-Za-z_-]/g,"-")}.pdf`;
-      doc.save(safeFile || "INVERNORD_REPORTE.pdf");
+      doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(120);
+      doc.text(`Preparado por: ${firm}`, M.left, pageH - 36);
+      doc.text(`Referencia PDF: ${r.pdfName || "—"}`, pageW - M.right, pageH - 36, { align:"right" });
+      doc.setTextColor(0);
+
+      const safeFile = `${ticker}_${date.replace(/[^0-9A-Za-z_-]/g,"-")}_INVERNORD.pdf`;
+      doc.save(safeFile);
       toast("PDF generado ✅");
     }
 
-    // Buttons
-    $("btnAddRow").addEventListener("click", ()=> addHoldingRow());
-    $("btnClearRows").addEventListener("click", ()=>{
-      $("holdingsTable").querySelector("tbody").innerHTML = "";
-      recalc();
-      toast("Tabla limpia");
+    // Events
+    $("btnNew").addEventListener("click", newReport);
+    $("btnSave").addEventListener("click", ()=>{
+      if(!getActive()){ toast("Crea un reporte primero"); return; }
+      pullForm();
+      save();
+      renderList();
+      toast("Guardado");
     });
-    $("btnAddKeyRow").addEventListener("click", ()=> addKeyRow());
-    $("btnRecalc").addEventListener("click", ()=> { recalc(); toast("Recalculado"); });
     $("btnPdf").addEventListener("click", generatePdf);
+    $("search").addEventListener("input", renderList);
 
-    // Defaults (PLTR + INVERNORD + Disclaimer)
-    $("advisorName").value = "INVERNORD";
-    $("primaryTicker").value = "PLTR";
+    $("pdfFile").addEventListener("change", (e)=>{
+      const file = e.target.files?.[0];
+      if(!file) return;
+      if(!getActive()){
+        newReport();
+      }
+      $("pdfName").value = file.name;
+      pullForm();
+      save();
+      renderList();
+      toast("PDF asociado (MVP)");
+      // Nota: no parseamos todavía
+    });
 
-    $("overview").value =
-`Palantir Technologies (PLTR) es una compañía de software enfocada en plataformas de analítica, integración de datos y operación de modelos (AI/ML) para clientes gubernamentales y comerciales. Su propuesta de valor se centra en convertir datos complejos y fragmentados en decisiones operativas, con una presencia históricamente fuerte en gobierno/defensa y una expansión creciente hacia empresas.`;
-
-    $("analysis").value =
-`La tesis se apoya en crecimiento comercial, expansión de márgenes por apalancamiento operativo y monetización incremental de capacidades de IA. Riesgos clave: alta volatilidad por valuación/expectativas y sensibilidad a guidance. Monitoreo sugerido: crecimiento de clientes comerciales, retención/expansión, margen operativo y flujo de caja.`;
-
-    $("pros").value =
-`• Producto con costos de cambio altos en casos de misión crítica
-• Expansión comercial y demanda asociada a IA
-• Potencial de apalancamiento operativo y generación de flujo de caja
-• Base gubernamental que aporta resiliencia relativa`;
-
-    $("cons").value =
-`• Alta volatilidad y riesgo de compresión de múltiplos
-• Dependencia de expectativas y sentimiento del mercado
-• Riesgo de concentración por cliente/segmento y ciclos de gasto
-• Competencia intensa en software/IA`;
-
-    $("conclusion").value =
-`Mantener / Comprar tácticamente en retrocesos para perfil agresivo con horizonte largo. Recomendación condicionada a tolerancia a volatilidad y disciplina de sizing (peso máximo por posición).`;
-
-    $("disclaimer").value =
-`Este reporte es únicamente informativo y no constituye una recomendación personalizada, oferta, invitación o solicitud para comprar o vender valores. El desempeño pasado no garantiza resultados futuros. Las opiniones y estimaciones reflejan el criterio de INVERNORD a la fecha del reporte y pueden cambiar sin previo aviso. Antes de invertir, evalúe sus objetivos, horizonte y tolerancia al riesgo y, de ser necesario, consulte a un asesor financiero y fiscal.`;
-
-    // Starter rows
-    addHoldingRow({ ticker:"PLTR", name:"Palantir Technologies Inc.", shares:5, price:131.98 });
-    addKeyRow({ metric:"Fecha de referencia", value:"Febrero 2026" });
-    addKeyRow({ metric:"Último precio de cierre", value:"(manual)" });
-    addKeyRow({ metric:"Capitalización de mercado", value:"(manual)" });
-    addKeyRow({ metric:"Rango 52 semanas", value:"(manual)" });
-    addKeyRow({ metric:"P/E (TTM / Forward)", value:"(manual / si aplica)" });
-    addKeyRow({ metric:"ROE", value:"(manual)" });
-    addKeyRow({ metric:"Ingresos anuales", value:"(manual)" });
-    addKeyRow({ metric:"Propiedad institucional", value:"(manual)" });
-    addKeyRow({ metric:"Dividendos", value:"No aplica (si no paga)" });
-
-    recalc();
+    // Boot
+    load();
+    if(reports.length){
+      activeReportId = reports[0].id;
+      fillForm(getActive());
+    }else{
+      fillForm(null);
+      $("disclaimer").value = defaultDisclaimer();
+      $("firmName").value = "INVERNORD";
+    }
+    renderList();
   </script>
 </body>
 </html>
